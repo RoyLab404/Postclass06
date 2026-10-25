@@ -103,25 +103,29 @@ Thuật toán nhận diện 9 dãy hạng liên tiếp cho mỗi chất. Có 4 c
 
 ### Kết quả ghi nhận trong Eclipse
 
-Các ảnh trong thư mục `img/` ghi lại ba lần chạy Coverage:
+Ba ảnh chụp kết quả trong thư mục `img/`:
 
-| Ảnh | Lần chạy | JUnit | Coverage `PokerHand.java` |
-|---|---|---|---:|
-| [`Screenshot 2026-10-25 231616.png`](img/Screenshot%202026-10-25%20231616.png) | Ca `True` | 3/3; 2 bỏ qua, 0 lỗi, 0 thất bại | 78/84 lệnh, 92,9% |
-| [`Screenshot 2026-10-25 231917.png`](img/Screenshot%202026-10-25%20231917.png) | Ca sai chất | 3/3; 2 bỏ qua, 0 lỗi, 0 thất bại | 80/84 lệnh, 95,2% |
-| [`Screenshot 2026-10-25 231946.png`](img/Screenshot%202026-10-25%20231946.png) | Chạy đủ ba test | 3/3; 0 bỏ qua, 0 lỗi, 0 thất bại | 80/84 lệnh, 95,2% |
-
-Ở ảnh chạy cuối, toàn project đạt 94,1% instruction coverage. Với lớp `PokerHand.java`, Eclipse ghi 95,2% (80/84 lệnh); dòng `assert pCards.length == 5` trong constructor còn được đánh dấu một phần. Đây là số instruction coverage Eclipse hiển thị cho cả lớp; đề bài yêu cầu xét statement coverage ở bài 5.9 và branch coverage ở bài 5.10.
+| Ảnh |
+|---|
+| [Ảnh 1](img/Screenshot%202026-10-25%20231616.png) |
+| [Ảnh 2](img/Screenshot%202026-10-25%20231917.png) |
+| [Ảnh 3](img/Screenshot%202026-10-25%20231946.png) |
 
 #### Ảnh 1. Chạy ca `True`
+
+JUnit báo 3/3, bỏ qua hai test; không có lỗi hay thất bại. Coverage của `PokerHand.java` là 78/84 lệnh, tương đương 92,9%.
 
 ![JUnit và coverage cho ca True](img/Screenshot%202026-10-25%20231616.png)
 
 #### Ảnh 2. Chạy ca sai chất
 
+JUnit báo 3/3, bỏ qua hai test; không có lỗi hay thất bại. Coverage của `PokerHand.java` là 80/84 lệnh, tương đương 95,2%.
+
 ![JUnit và coverage cho ca sai chất](img/Screenshot%202026-10-25%20231917.png)
 
 #### Ảnh 3. Chạy đủ ba test
+
+JUnit báo 3/3, không bỏ qua test nào; không có lỗi hay thất bại. Coverage của `PokerHand.java` là 80/84 lệnh, tương đương 95,2%; toàn project đạt 94,1%. Dòng `assert pCards.length == 5` trong constructor còn được đánh dấu một phần. Đây là số instruction coverage Eclipse hiển thị cho cả lớp; đề bài yêu cầu xét statement coverage ở bài 5.9 và branch coverage ở bài 5.10.
 
 ![JUnit và coverage sau khi chạy đủ ba test](img/Screenshot%202026-10-25%20231946.png)
 
