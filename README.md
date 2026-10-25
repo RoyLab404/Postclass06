@@ -31,15 +31,27 @@ Constructor nhận năm lá và sắp xếp chúng theo hạng. `isStraightFlush
 
 Đề có hai yêu cầu. Trước tiên, viết `TestPokerHand` và kiểm tra một tay bài mà `isStraightFlush()` trả về `true`. Tiếp theo, tính số lần chạy cần thiết để thử mọi sảnh đồng chất, rồi phân biệt việc thử hết các trường hợp trả về `true` với việc kiểm thử hết mọi tay bài.
 
-Test dùng là `testIsStraightFlush_True()`. Helper `invokeIsStraightFlush` tìm phương thức bằng `getDeclaredMethod`, bật quyền truy cập bằng `setAccessible(true)`, rồi gọi phương thức trên đối tượng `PokerHand`. Test tạo các lá `Card.get(Rank.TWO, Suit.CLUBS)` đến `Card.get(Rank.SIX, Suit.CLUBS)`. Kết quả mong đợi là `true`.
+Test dùng là `testIsStraightFlush_True()`. Helper `invokeIsStraightFlush` tìm phương thức bằng `getDeclaredMethod`, bật quyền truy cập bằng `setAccessible(true)`, rồi gọi phương thức trên đối tượng `PokerHand`. Năm lá của test là `Card.get(Rank.TWO, Suit.CLUBS)`, `Card.get(Rank.THREE, Suit.CLUBS)`, `Card.get(Rank.FOUR, Suit.CLUBS)`, `Card.get(Rank.FIVE, Suit.CLUBS)` và `Card.get(Rank.SIX, Suit.CLUBS)`. Kết quả mong đợi là `true`.
 
-Theo cách đếm của lời giải tham khảo, có 9 dãy hạng liên tiếp cho mỗi chất. Với 4 chất, cần 36 lần chạy để kiểm tra từng sảnh đồng chất. Những lần chạy này chỉ kiểm tra các tay bài trả về `true`; chúng không thể bao phủ tất cả tay bài trả về `false`.
+Thứ tự trong enum `Rank` là `ACE`, `TWO`, `THREE`, `FOUR`, `FIVE`, `SIX`, `SEVEN`, `EIGHT`, `NINE`, `TEN`, `JACK`, `QUEEN`, `KING`. Vì `isStraightFlush()` so sánh `ordinal()`, `ACE` được tính thấp hơn `TWO`. Chín dãy hạng liên tiếp mà phương thức nhận diện là:
+
+1. `ACE`, `TWO`, `THREE`, `FOUR`, `FIVE`
+2. `TWO`, `THREE`, `FOUR`, `FIVE`, `SIX`
+3. `THREE`, `FOUR`, `FIVE`, `SIX`, `SEVEN`
+4. `FOUR`, `FIVE`, `SIX`, `SEVEN`, `EIGHT`
+5. `FIVE`, `SIX`, `SEVEN`, `EIGHT`, `NINE`
+6. `SIX`, `SEVEN`, `EIGHT`, `NINE`, `TEN`
+7. `SEVEN`, `EIGHT`, `NINE`, `TEN`, `JACK`
+8. `EIGHT`, `NINE`, `TEN`, `JACK`, `QUEEN`
+9. `NINE`, `TEN`, `JACK`, `QUEEN`, `KING`
+
+Mỗi dãy có thể đi với `Suit.CLUBS`, `Suit.DIAMONDS`, `Suit.SPADES` hoặc `Suit.HEARTS`. Tổng cộng có `9 × 4 = 36` sảnh đồng chất. Số này chỉ tính các tay bài mà phương thức trả về `true`; nó không bao phủ mọi tay bài trả về `false`.
 
 ### Bài 5.9
 
 Đề yêu cầu mở rộng bộ test để đạt statement coverage đầy đủ với ít lần gọi UUT nhất. Test `testIsStraightFlush_True()` chạy qua vòng lặp và câu lệnh `return true`, nhưng chưa chạy câu lệnh `return false`. Vì vậy cần thêm một test có kết quả `false`.
 
-Trong project này, test `testIsStraightFlush_WrongSuit()` dùng cùng dãy hạng từ `Rank.TWO` đến `Rank.SIX`, nhưng lá cuối là `Card.get(Rank.SIX, Suit.DIAMONDS)`. Phương thức phát hiện giá trị `Suit` khác và đi tới `return false`. Hai lần gọi UUT, gồm `testIsStraightFlush_True()` và `testIsStraightFlush_WrongSuit()`, là đủ cho statement coverage. Lời giải tham khảo cũng cho biết có thể dùng `testIsStraightFlush_WrongRank()` thay cho test sai chất ở bước này.
+Trong project này, test `testIsStraightFlush_WrongSuit()` dùng `Card.get(Rank.TWO, Suit.CLUBS)`, `Card.get(Rank.THREE, Suit.CLUBS)`, `Card.get(Rank.FOUR, Suit.CLUBS)`, `Card.get(Rank.FIVE, Suit.CLUBS)` và `Card.get(Rank.SIX, Suit.DIAMONDS)`. Phương thức phát hiện hai giá trị `Suit` khác nhau và đi tới `return false`. Hai lần gọi UUT, gồm `testIsStraightFlush_True()` và `testIsStraightFlush_WrongSuit()`, là đủ cho statement coverage. Lời giải tham khảo cũng cho biết có thể dùng `testIsStraightFlush_WrongRank()` thay cho test này ở bước 5.9.
 
 ### Bài 5.10
 
@@ -49,7 +61,7 @@ Trong project này, test `testIsStraightFlush_WrongSuit()` dùng cùng dãy hạ
 card.suit() != suit || card.rank().ordinal() - rank.ordinal() != 1
 ```
 
-Test `testIsStraightFlush_True()` làm cả hai vế sai. Test `testIsStraightFlush_WrongSuit()` làm vế thứ nhất đúng, nên Java dừng đánh giá vế thứ hai. Test `testIsStraightFlush_WrongRank()` dùng các lá `Rank.TWO`, `Rank.THREE`, `Rank.FOUR`, `Rank.FIVE`, `Rank.SEVEN`, tất cả có `Suit.CLUBS`; vế thứ nhất sai rồi vế thứ hai đúng. Ba lần gọi UUT bao phủ ba đường đánh giá của điều kiện `||`.
+Test `testIsStraightFlush_True()` làm cả hai vế sai. Test `testIsStraightFlush_WrongSuit()` làm vế thứ nhất đúng, nên Java dừng đánh giá vế thứ hai. Test `testIsStraightFlush_WrongRank()` dùng `Card.get(Rank.TWO, Suit.CLUBS)`, `Card.get(Rank.THREE, Suit.CLUBS)`, `Card.get(Rank.FOUR, Suit.CLUBS)`, `Card.get(Rank.FIVE, Suit.CLUBS)` và `Card.get(Rank.SEVEN, Suit.CLUBS)`; vế thứ nhất sai rồi vế thứ hai đúng. Ba lần gọi UUT bao phủ ba đường đánh giá của điều kiện `||`.
 
 `Card`, `Rank` và `Suit` trong project theo phiên bản 3 của repo. `Card` phiên bản này có accessor `rank()` và `suit()`, nên các lời gọi trong `PokerHand` dùng đúng tên đó.
 
