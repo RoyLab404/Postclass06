@@ -23,21 +23,23 @@
 
 Trong các bài này, UUT (Unit Under Test) là phương thức `isStraightFlush()` của `PokerHand`. Phương thức được khai báo `private`, nên đề yêu cầu lớp test có helper để gọi nó bằng reflection. Em giữ nguyên mức truy cập của phương thức.
 
+Project dùng JUnit Jupiter 5.10.2. Em chạy test trong Eclipse bằng **Run As → JUnit Test**. Để xem số liệu coverage, em chạy **Coverage As → JUnit Test** và đọc kết quả trong cửa sổ **Coverage**.
+
 Constructor nhận năm lá và sắp xếp chúng theo hạng. `isStraightFlush()` lấy chất và hạng của lá đầu tiên, sau đó duyệt bốn lá còn lại. Mỗi lá phải cùng chất và có hạng cao hơn lá trước đúng một bậc. Gặp lá không thỏa điều kiện thì phương thức trả về `false`; nếu duyệt hết mà không gặp lỗi thì trả về `true`.
 
 ### Bài 5.8
 
 Đề có hai yêu cầu. Trước tiên, viết `TestPokerHand` và kiểm tra một tay bài mà `isStraightFlush()` trả về `true`. Tiếp theo, tính số lần chạy cần thiết để thử mọi sảnh đồng chất, rồi phân biệt việc thử hết các trường hợp trả về `true` với việc kiểm thử hết mọi tay bài.
 
-Helper `invokeIsStraightFlush` tìm phương thức bằng `getDeclaredMethod`, bật quyền truy cập bằng `setAccessible(true)`, rồi gọi phương thức trên đối tượng `PokerHand`. Test dùng các lá 2, 3, 4, 5, 6 cùng chất tép. Đây là sảnh đồng chất nên kết quả mong đợi là `true`.
+Test dùng là `testIsStraightFlush_True()`. Helper `invokeIsStraightFlush` tìm phương thức bằng `getDeclaredMethod`, bật quyền truy cập bằng `setAccessible(true)`, rồi gọi phương thức trên đối tượng `PokerHand`. Test tạo các lá `Card.get(Rank.TWO, Suit.CLUBS)` đến `Card.get(Rank.SIX, Suit.CLUBS)`. Kết quả mong đợi là `true`.
 
 Theo cách đếm của lời giải tham khảo, có 9 dãy hạng liên tiếp cho mỗi chất. Với 4 chất, cần 36 lần chạy để kiểm tra từng sảnh đồng chất. Những lần chạy này chỉ kiểm tra các tay bài trả về `true`; chúng không thể bao phủ tất cả tay bài trả về `false`.
 
 ### Bài 5.9
 
-Đề yêu cầu mở rộng bộ test để đạt statement coverage đầy đủ với ít lần gọi UUT nhất. Một test `True` chạy qua vòng lặp và câu lệnh `return true`, nhưng chưa chạy câu lệnh `return false`. Vì vậy cần thêm một tay bài sai.
+Đề yêu cầu mở rộng bộ test để đạt statement coverage đầy đủ với ít lần gọi UUT nhất. Test `testIsStraightFlush_True()` chạy qua vòng lặp và câu lệnh `return true`, nhưng chưa chạy câu lệnh `return false`. Vì vậy cần thêm một test có kết quả `false`.
 
-Trong project này, `WrongSuit` đổi lá 6 từ tép sang rô. Phương thức phát hiện chất khác và đi tới `return false`. Hai lần gọi UUT, gồm `True` và `WrongSuit`, là đủ cho statement coverage. Lời giải tham khảo cũng cho biết có thể dùng `WrongRank` thay cho `WrongSuit` ở bước này.
+Trong project này, test `testIsStraightFlush_WrongSuit()` dùng cùng dãy hạng từ `Rank.TWO` đến `Rank.SIX`, nhưng lá cuối là `Card.get(Rank.SIX, Suit.DIAMONDS)`. Phương thức phát hiện giá trị `Suit` khác và đi tới `return false`. Hai lần gọi UUT, gồm `testIsStraightFlush_True()` và `testIsStraightFlush_WrongSuit()`, là đủ cho statement coverage. Lời giải tham khảo cũng cho biết có thể dùng `testIsStraightFlush_WrongRank()` thay cho test sai chất ở bước này.
 
 ### Bài 5.10
 
@@ -47,7 +49,7 @@ Trong project này, `WrongSuit` đổi lá 6 từ tép sang rô. Phương thức
 card.suit() != suit || card.rank().ordinal() - rank.ordinal() != 1
 ```
 
-Để kiểm tra các nhánh của hai vế, cần ba tình huống. `True` làm cả hai vế sai. `WrongSuit` làm vế thứ nhất đúng, nên Java dừng đánh giá vế thứ hai. `WrongRank` làm vế thứ nhất sai rồi vế thứ hai đúng. Do hai trường hợp sai đi qua các nhánh khác nhau của phép `||`, bài 5.10 cần đủ ba lần gọi UUT.
+Test `testIsStraightFlush_True()` làm cả hai vế sai. Test `testIsStraightFlush_WrongSuit()` làm vế thứ nhất đúng, nên Java dừng đánh giá vế thứ hai. Test `testIsStraightFlush_WrongRank()` dùng các lá `Rank.TWO`, `Rank.THREE`, `Rank.FOUR`, `Rank.FIVE`, `Rank.SEVEN`, tất cả có `Suit.CLUBS`; vế thứ nhất sai rồi vế thứ hai đúng. Ba lần gọi UUT bao phủ ba đường đánh giá của điều kiện `||`.
 
 `Card`, `Rank` và `Suit` trong project theo phiên bản 3 của repo. `Card` phiên bản này có accessor `rank()` và `suit()`, nên các lời gọi trong `PokerHand` dùng đúng tên đó.
 
@@ -108,25 +110,25 @@ Kết quả kỳ vọng và số lần gọi UUT:
 
 | Bài | Các ca cần chạy | Số lần gọi UUT | Mục tiêu |
 |---|---|---:|---|
-| 5.8 | `True` | 1 | Kiểm tra kết quả dương |
-| 5.9 | `True` và một ca sai, ví dụ `WrongSuit` | 2 | Statement coverage đầy đủ |
-| 5.10 | `True`, `WrongSuit`, `WrongRank` | 3 | Branch coverage đầy đủ cho điều kiện trong `isStraightFlush()` |
+| 5.8 | `testIsStraightFlush_True()` | 1 | Kiểm tra kết quả dương |
+| 5.9 | `testIsStraightFlush_True()` và `testIsStraightFlush_WrongSuit()` | 2 | Statement coverage đầy đủ |
+| 5.10 | `testIsStraightFlush_True()`, `testIsStraightFlush_WrongSuit()`, `testIsStraightFlush_WrongRank()` | 3 | Branch coverage đầy đủ cho điều kiện trong `isStraightFlush()` |
 
-Ảnh 3 xác nhận các kết quả mong đợi: ca `True` đạt `assertTrue`, hai ca sai đạt `assertFalse`.
+Ảnh 3 xác nhận các kết quả mong đợi: `testIsStraightFlush_True()` đạt `assertTrue`; `testIsStraightFlush_WrongSuit()` và `testIsStraightFlush_WrongRank()` đạt `assertFalse`.
 
 ### Kết quả ghi nhận trong Eclipse
 
-#### Ảnh 1. Chạy ca `True`
+#### Ảnh 1. Chạy `testIsStraightFlush_True()`
 
 JUnit báo 3/3, bỏ qua hai test; không có lỗi hay thất bại. Coverage của `PokerHand.java` là 78/84 lệnh, tương đương 92,9%.
 
-![JUnit và coverage cho ca True](img/Screenshot%202026-10-25%20231616.png)
+![JUnit và coverage cho testIsStraightFlush_True](img/Screenshot%202026-10-25%20231616.png)
 
-#### Ảnh 2. Chạy ca sai chất
+#### Ảnh 2. Chạy `testIsStraightFlush_WrongSuit()`
 
 JUnit báo 3/3, bỏ qua hai test; không có lỗi hay thất bại. Coverage của `PokerHand.java` là 80/84 lệnh, tương đương 95,2%.
 
-![JUnit và coverage cho ca sai chất](img/Screenshot%202026-10-25%20231917.png)
+![JUnit và coverage cho testIsStraightFlush_WrongSuit](img/Screenshot%202026-10-25%20231917.png)
 
 #### Ảnh 3. Chạy đủ ba test
 
