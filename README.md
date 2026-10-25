@@ -19,14 +19,37 @@ Trong ba bài này, em viết test cho lớp `PokerHand`, tập trung vào phư�
 
 Đề bài: [Chapter 5 Practice Exercises](https://github.com/prmr/DesignBook/blob/master/exercises/e-chapter5.md). Lời giải tham khảo cho ba bài: [Exercise 8–10](https://codesample.info/samples/designbook/solutions5/Exercise08to10.html).
 
-## 2. Nhiệm vụ cần làm
+## 2. Phân tích yêu cầu và cách làm
 
-1. Tạo tay bài gồm năm lá. Constructor sắp xếp các lá theo hạng trước khi kiểm tra.
-2. Dùng reflection trong mã test để gọi phương thức `private`, giữ nguyên mức truy cập trong `PokerHand`.
-3. Kiểm tra tay bài hợp lệ, tay bài sai chất và tay bài sai hạng.
-4. Đếm số lần gọi UUT cần cho statement coverage và branch coverage.
+Trong các bài này, UUT (Unit Under Test) là phương thức `isStraightFlush()` của `PokerHand`. Phương thức được khai báo `private`, nên đề yêu cầu lớp test có helper để gọi nó bằng reflection. Em giữ nguyên mức truy cập của phương thức.
 
-UUT trong bài này là `isStraightFlush()`. `Card`, `Rank` và `Suit` được lấy theo mã nguồn phiên bản 3 của repo. Phiên bản này dùng `rank()` và `suit()`, nên `PokerHand` gọi đúng hai accessor đó.
+Constructor nhận năm lá và sắp xếp chúng theo hạng. `isStraightFlush()` lấy chất và hạng của lá đầu tiên, sau đó duyệt bốn lá còn lại. Mỗi lá phải cùng chất và có hạng cao hơn lá trước đúng một bậc. Gặp lá không thỏa điều kiện thì phương thức trả về `false`; nếu duyệt hết mà không gặp lỗi thì trả về `true`.
+
+### Bài 5.8
+
+Đề có hai yêu cầu. Trước tiên, viết `TestPokerHand` và kiểm tra một tay bài mà `isStraightFlush()` trả về `true`. Tiếp theo, tính số lần chạy cần thiết để thử mọi sảnh đồng chất, rồi phân biệt việc thử hết các trường hợp trả về `true` với việc kiểm thử hết mọi tay bài.
+
+Helper `invokeIsStraightFlush` tìm phương thức bằng `getDeclaredMethod`, bật quyền truy cập bằng `setAccessible(true)`, rồi gọi phương thức trên đối tượng `PokerHand`. Test dùng các lá 2, 3, 4, 5, 6 cùng chất tép. Đây là sảnh đồng chất nên kết quả mong đợi là `true`.
+
+Theo cách đếm của lời giải tham khảo, có 9 dãy hạng liên tiếp cho mỗi chất. Với 4 chất, cần 36 lần chạy để kiểm tra từng sảnh đồng chất. Những lần chạy này chỉ kiểm tra các tay bài trả về `true`; chúng không thể bao phủ tất cả tay bài trả về `false`.
+
+### Bài 5.9
+
+Đề yêu cầu mở rộng bộ test để đạt statement coverage đầy đủ với ít lần gọi UUT nhất. Một test `True` chạy qua vòng lặp và câu lệnh `return true`, nhưng chưa chạy câu lệnh `return false`. Vì vậy cần thêm một tay bài sai.
+
+Trong project này, `WrongSuit` đổi lá 6 từ tép sang rô. Phương thức phát hiện chất khác và đi tới `return false`. Hai lần gọi UUT, gồm `True` và `WrongSuit`, là đủ cho statement coverage. Lời giải tham khảo cũng cho biết có thể dùng `WrongRank` thay cho `WrongSuit` ở bước này.
+
+### Bài 5.10
+
+Đề yêu cầu mở rộng bộ test để đạt branch coverage đầy đủ với ít lần gọi UUT nhất. Điều kiện trong phương thức dùng phép `||`:
+
+```java
+card.suit() != suit || card.rank().ordinal() - rank.ordinal() != 1
+```
+
+Để kiểm tra các nhánh của hai vế, cần ba tình huống. `True` làm cả hai vế sai. `WrongSuit` làm vế thứ nhất đúng, nên Java dừng đánh giá vế thứ hai. `WrongRank` làm vế thứ nhất sai rồi vế thứ hai đúng. Do hai trường hợp sai đi qua các nhánh khác nhau của phép `||`, bài 5.10 cần đủ ba lần gọi UUT.
+
+`Card`, `Rank` và `Suit` trong project theo phiên bản 3 của repo. `Card` phiên bản này có accessor `rank()` và `suit()`, nên các lời gọi trong `PokerHand` dùng đúng tên đó.
 
 ## 3. Code test
 
@@ -79,15 +102,7 @@ void testIsStraightFlush_WrongRank() {
 
 ## 4. Giải thích, kết quả và nhận xét
 
-Điều kiện cần kiểm tra trong `isStraightFlush()` là:
-
-```java
-card.suit() != suit || card.rank().ordinal() - rank.ordinal() != 1
-```
-
-- Ở ca `True`, em dùng các lá 2, 3, 4, 5, 6 cùng chất tép. Chất không đổi và hạng tăng từng bậc, nên phương thức trả về `true`.
-- Ở ca `WrongSuit`, em đổi lá 6 sang rô. Các hạng vẫn liên tiếp, nhưng chất khác nên phương thức trả về `false`.
-- Ở ca `WrongRank`, em dùng 2, 3, 4, 5, 7 cùng chất tép. Hạng cuối bị đứt quãng nên phương thức trả về `false`.
+Kết quả kỳ vọng và số lần gọi UUT:
 
 ### Số lần chạy tối thiểu
 
@@ -97,19 +112,9 @@ card.suit() != suit || card.rank().ordinal() - rank.ordinal() != 1
 | 5.9 | `True` và một ca sai, ví dụ `WrongSuit` | 2 | Statement coverage đầy đủ |
 | 5.10 | `True`, `WrongSuit`, `WrongRank` | 3 | Branch coverage đầy đủ cho điều kiện trong `isStraightFlush()` |
 
-Trong `WrongSuit`, vế so sánh chất đúng nên phép `||` dừng tại đó. Trong `WrongRank`, vế chất sai và phép kiểm tra chuyển sang hạng. Ca `True` đi qua khi cả hai vế đều sai rồi đến `return true`. Em cần cả ba ca để kiểm tra các nhánh này ở bài 5.10.
-
-Thuật toán nhận diện 9 dãy hạng liên tiếp cho mỗi chất. Có 4 chất nên cần 36 lần chạy để thử từng sảnh đồng chất. Các lần chạy đó chỉ kiểm tra tay bài cho kết quả `true`; chúng không bao phủ các tay bài cho kết quả `false`.
+Ba test đều chạy qua trong ảnh 3. Ca `True` trả về `true`; hai ca sai trả về `false`, như mong đợi.
 
 ### Kết quả ghi nhận trong Eclipse
-
-Ba ảnh chụp kết quả trong thư mục `img/`:
-
-| Ảnh |
-|---|
-| [Ảnh 1](img/Screenshot%202026-10-25%20231616.png) |
-| [Ảnh 2](img/Screenshot%202026-10-25%20231917.png) |
-| [Ảnh 3](img/Screenshot%202026-10-25%20231946.png) |
 
 #### Ảnh 1. Chạy ca `True`
 
