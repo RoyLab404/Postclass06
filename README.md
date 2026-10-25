@@ -112,7 +112,7 @@ Kết quả kỳ vọng và số lần gọi UUT:
 | 5.9 | `True` và một ca sai, ví dụ `WrongSuit` | 2 | Statement coverage đầy đủ |
 | 5.10 | `True`, `WrongSuit`, `WrongRank` | 3 | Branch coverage đầy đủ cho điều kiện trong `isStraightFlush()` |
 
-Ba test đều chạy qua trong ảnh 3. Ca `True` trả về `true`; hai ca sai trả về `false`, như mong đợi.
+Ảnh 3 xác nhận các kết quả mong đợi: ca `True` đạt `assertTrue`, hai ca sai đạt `assertFalse`. Việc cả ba test pass không đồng nghĩa toàn lớp đạt 100% coverage; báo cáo của `PokerHand.java` vẫn ghi 95,2%.
 
 ### Kết quả ghi nhận trong Eclipse
 
