@@ -113,6 +113,16 @@ Các ảnh trong thư mục `img/` ghi lại ba lần chạy Coverage:
 
 Ở ảnh chạy cuối, toàn project đạt 94,1% instruction coverage. Với lớp `PokerHand.java`, Eclipse ghi 95,2% (80/84 lệnh); dòng `assert pCards.length == 5` trong constructor còn được đánh dấu một phần. Đây là số instruction coverage Eclipse hiển thị cho cả lớp; đề bài yêu cầu xét statement coverage ở bài 5.9 và branch coverage ở bài 5.10.
 
+#### Ảnh 1. Chạy ca `True`
+
+![JUnit và coverage cho ca True](img/Screenshot%202026-10-25%20231616.png)
+
+#### Ảnh 2. Chạy ca sai chất
+
+![JUnit và coverage cho ca sai chất](img/Screenshot%202026-10-25%20231917.png)
+
+#### Ảnh 3. Chạy đủ ba test
+
 ![JUnit và coverage sau khi chạy đủ ba test](img/Screenshot%202026-10-25%20231946.png)
 
 ## 5. Cấu trúc project và nguồn
