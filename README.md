@@ -11,11 +11,11 @@
 
 ## 1. Đề bài
 
-Trong ba bài này, em viết test cho lớp `PokerHand`, tập trung vào phương thức `isStraightFlush()`.
+`PokerHand` là lớp mẫu một phần của bài 3.12. Các yêu cầu được giao:
 
-- **Bài 5.8:** Viết lớp test `TestPokerHand`, dùng reflection để gọi phương thức `private isStraightFlush()`, rồi kiểm tra một trường hợp có kết quả `true`. Đề cũng hỏi số lần chạy cần thiết để thử mọi sảnh đồng chất và liệu các lần chạy đó có kiểm thử hết mọi kiểu tay bài hay không.
-- **Bài 5.9:** Mở rộng bộ test để đạt statement coverage đầy đủ với số lần gọi UUT ít nhất.
-- **Bài 5.10:** Mở rộng bộ test để đạt branch coverage đầy đủ với số lần gọi UUT ít nhất.
+- **Bài 5.8:** Viết lớp test `TestPokerHand` với helper để kiểm tra phương thức private `isStraightFlush()`, rồi viết một test case cho kết quả `true`. Tính số lần thực thi UUT cần để kiểm tra mọi sảnh đồng chất có thể có và xác định các lần chạy đó có tạo thành exhaustive test coverage hay không.
+- **Bài 5.9:** Mở rộng bộ test của `PokerHand` để đạt complete statement coverage với số lần thực thi UUT ít nhất.
+- **Bài 5.10:** Mở rộng bộ test của `PokerHand` để đạt complete branch coverage với số lần thực thi UUT ít nhất.
 
 Đề bài: [Chapter 5 Practice Exercises](https://github.com/prmr/DesignBook/blob/master/exercises/e-chapter5.md). Lời giải tham khảo cho ba bài: [Exercise 8–10](https://codesample.info/samples/designbook/solutions5/Exercise08to10.html).
 
